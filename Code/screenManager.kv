@@ -1,0 +1,369 @@
+
+#:import random random.random
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+MyScreenManager:
+    transition: SlideTransition()
+    orientation: 'vertical'
+    WelcomeScreen:
+    SliderBar:
+    DropDownSlider:
+    SliderTable:
+
+<WelcomeScreen>:
+    name: 'welcome'
+    hue: random()
+    orientation: 'vertical'
+    canvas:
+        Color:
+            hsv: self.hue, .5, .3
+        Rectangle:
+            size: self.size
+
+    Label:
+        font_size: self.width / 15
+        text: "The Music Slider Experience"
+
+    Button:
+        text: 'Classic Slider'
+        size_hint: None, None
+        pos_hint: {'center_y':0.2 , 'center_x': 0.8}
+        size: root.width / 4 , root.height /4
+        on_release:
+            root.manager.transition = SlideTransition(direction="left")
+            app.root.current = 'slider'
+
+    Button:
+        text: 'Drop Down Slider'
+        size_hint: None, None
+        pos_hint: {'center_x':0.5 ,'center_y':0.2}
+        size: root.width / 4 , root.height /4
+        on_release:
+            root.manager.transition = SlideTransition(direction="down")
+            app.root.current = 'dropDown'
+
+    Button:
+        text: 'Slider Table'
+        size_hint: None, None
+        pos_hint: {'center_x':0.2, 'center_y':0.2}
+        size: root.width / 4 , root.height /4
+        on_release:
+            root.manager.transition = SlideTransition(direction="right")
+            app.root.current = 'sliderTable'
+
+
+
+    Button:
+        text: 'Exit'
+        pos_hint: {'top':1, 'right':1}
+        size_hint: None, None
+        size: root.width / 8 , root.height / 8
+        on_release: quit()
+
+
+<SliderBar>
+    name: 'slider'
+    my_image: my_image
+    my_image_wrap: my_image_wrap                                        # <
+    scatter: scatter                                                    # <
+    sliSpinLayout: sliSpinLayout
+    sliTog: sliTog
+    chosenScale: chosenScale
+
+    orientation: 'vertical'
+    canvas.before:
+        Rectangle:
+            pos: 0, 0
+            size: self.width, (self.height / 1.1)
+            source: 'images/background.png'
+
+    ToggleButton:
+        id: sliTog
+        text: "CH/SC"
+        # font_size:
+        size_hint: None, None
+        pos: 0,0
+        pos_hint: {'center_x': 0.05 , 'top':1}
+        size: root.width / 14, root.height / 10.5
+        state: 'normal'
+        on_press: root.changeSpinner()
+
+
+    BoxLayout:
+        id: sliSpinLayout
+        orientation:'horizontal'
+        size: (root.width/4, root.height/10.5)
+        size_hint: (None, None)
+        pos_hint: {'center_x' : 0.25, 'top':1}
+
+
+        Label:
+            id: sliSpin
+            text: '<----Click This'
+            values: root.slideChords
+            pos: 0, 0
+            size_hint: None, None
+            pos_hint: {'center_x':0.32,'top': 1}
+            size: root.width / 4, root.height / 10.5
+            # on_release: root.changeSpinner()
+
+
+
+
+    Button:
+        id: chosenScale
+        text: 'Display'
+        size_hint: None, None
+        pos_hint: {'center_x': 0.45 , 'top':1}
+        size: root.width / 14, root.height / 10.5
+        on_release: root.updateScale()
+        disabled: True
+
+
+    Button:
+        id: menu
+        text: 'Menu'
+        pos: 0, 0
+        size_hint: None, None
+        pos_hint: {'top': 1 , 'right':1}
+        size: root.width / 5, root.height / 10.5
+        on_release:
+            root.manager.transition = SlideTransition(direction="right")
+            app.root.current = 'welcome'
+
+
+    FloatLayout:
+        size_hint: 1, 0.91
+
+
+        Scatter:
+            id: scatter
+            center: self.parent.center
+            size_hint: None , None
+            size: root.width * 2 + my_image.size[0] , my_image.size[1]  # <
+            do_rotation:False
+            do_translation_y:False
+            do_scale:False
+            on_transform_with_touch: root.update_image_wrap()
+
+
+            Label:
+                Image:
+                    id: my_image
+                    source: root.source
+                    allow_stretch: True
+                    keep_ratio: False
+                    size: root.width / 1.684 , root.height / 3
+                    pos: scatter.size[0] / 2 - self.size[0] / 2, root.pos[1]
+
+            Label:                                                      # <
+                Image:                                                  # <
+                    id: my_image_wrap                                   # <
+                    source: root.source                                 # <
+                    allow_stretch: True                                 # <
+                    keep_ratio: False                                   # <
+                    size: root.width / 1.8 , root.height / 3            # <
+                    pos: scatter.size[0] - self.size[0] , root.pos[1]   # <
+
+<DropDownSlider>:
+    name: 'dropDown'
+
+    checkbox_cho: checkbox_cho
+    checkbox_sca: checkbox_sca
+    dropdown_cho: dropdown_cho
+    dropdown_ton: dropdown_ton
+    dropdown_sca: dropdown_sca
+    resultLayout: resultLayout
+    patternLayout: patternLayout
+    playAllLayout: playAllLayout
+
+
+    hue: random()
+    orientation: 'horizontal'
+    canvas.before:
+        Color:
+            hsv: self.hue, .5, .3
+        Rectangle:
+            size: self.width, (self.height / 1.1)
+
+    BoxLayout:
+        pos: 0,0
+        pos_hint: {'top' :0.80, 'center_x': 0.04 }
+        orientation:'horizontal'
+        size_hint: (None,None)
+        height: 50
+        spacing: 10
+
+
+        Label:
+            text:"Tonic Note:"
+            size_hint:(None,None)
+            size: root.width / 10, root.height / 10
+
+        Spinner:
+            id: dropdown_ton
+            text:'C'
+            values: root.notes
+            size_hint:(None,None)
+            size:(root.width / 6.5 ,root.height / 10)
+
+        Label:
+            text:"Chord:"
+            size_hint:(None,None)
+            size: root.width / 10, root.height / 10
+
+        CheckBox:
+            id: checkbox_cho
+            group:'selection'
+            active:True
+            size_hint:(None,None)
+            size: 40,40
+            on_active: root.checkActive()
+
+        Spinner:
+            id: dropdown_cho
+            text: 'Major'
+            values: root.chords.keys()
+            size_hint:(None,None)
+            size: dropdown_ton.size
+
+
+        Label:
+            text:"Scale:"
+            size_hint:(None,None)
+            size: root.width / 10, root.height / 10
+
+        CheckBox:
+            id: checkbox_sca
+            group:'selection'
+            size_hint:(None,None)
+            size:(40,40)
+            on_active: root.checkActive()
+
+        Spinner:
+            id: dropdown_sca
+            text:'Major'
+            values: root.scales.keys()
+            size_hint:(None,None)
+            size: dropdown_ton.size
+            disabled: True
+
+    Button:
+        text: 'Display'
+        pos: 0,0
+        pos_hint: {'center_x' : 0.5, 'center_y': 0.6}
+        size_hint:(None,None)
+        size:(root.width / 2 , root.height / 10)
+        on_release: root.on_press()
+
+
+
+    BoxLayout:
+        id: playAllLayout
+        orientation:'horizontal'
+        size_hint: (None, None)
+        pos: 0,0
+        pos_hint: {'center_x' : 0.27, 'top':0.49}
+
+
+
+    BoxLayout:
+        id: resultLayout
+        orientation:'horizontal'
+        size_hint:(None,None)
+        pos_hint: {'center_x' : 0.30, 'top':0.35}
+        spacing:20
+
+
+
+    BoxLayout:
+        id: patternLayout
+        orientation:'horizontal'
+        size_hint:(None,None)
+        pos_hint: {'center_x' : 0.25, 'top':0.2}
+        spacing:10
+
+    Button:
+        id: menu
+        text: 'Menu'
+        pos: 0, 0
+        size_hint: None, None
+        pos_hint: {'top': 1 , 'right':1}
+        size: root.width / 5, root.height / 10.5
+        on_release:
+            root.manager.transition = SlideTransition(direction="up")
+            app.root.current = 'welcome'
+
+
+<PlayUpPopup>:
+    popULabel: popULabel
+
+    id: playUPop
+    size: (root.width) , (root.height)
+    size_hint: None, None
+    auto_dismiss: False
+    title: 'Tone Sequence'
+    on_open: root.playU()
+    Label:
+        id: popULabel
+        text:"UP"
+
+<PlayDownPopup>:
+    popDLabel: popDLabel
+
+    id: playDPop
+    size: (root.width) , (root.height)
+    size_hint: None, None
+    auto_dismiss: False
+    title: 'Tone Sequence'
+    on_open: root.playD()
+    Label:
+        id: popDLabel
+        text:"DOWN"
+
+
+
+<SliderTable>:
+    name: 'sliderTable'
+    hue: random()
+    orientation: 'vertical'
+    canvas:
+        Color:
+            hsv: self.hue, .5, .3
+        Rectangle:
+            size: self.size
+
+    Label:
+        font_size: self.width / 15
+        text: "Coming Soon"
+
+    FloatLayout:
+        size_hint: 1, 0.91
+
+# Scatter handels the touch movement automatically
+        Scatter:
+            id: scatter
+            center: self.parent.center
+            size_hint: None , None
+            size: my_image.size
+
+# Image that goes in the scatter
+            Label:
+                Image:
+                    id: my_image
+                    source: 'images/tableDemo.png'
+                    allow_stretch: True
+                    keep_ratio: False
+                    size: root.width / 4 , root.height / 5
+
+# Menu Button
+    Button:
+        id: menu
+        text: 'Menu'
+        pos: 0, 0
+        size_hint: None, None
+        pos_hint: {'top': 1 , 'right':1}
+        size: root.width / 5, root.height / 10.5
+        on_release:
+            root.manager.transition = SlideTransition(direction="left")
+            app.root.current = 'welcome'
+
